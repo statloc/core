@@ -1,4 +1,4 @@
-module statloc
+module github.com/statloc/core
 
 go 1.25.1
 
