@@ -1,3 +1,7 @@
+.DEFAULT_GOAL := check
+
+check: lint test
+
 lint:
 	go tool golangci-lint run
 
