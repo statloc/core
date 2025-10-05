@@ -1,6 +1,8 @@
-module statloc
+module github.com/statloc/core
 
 go 1.25.1
+
+require github.com/stretchr/testify v1.11.1
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.3.0 // indirect
@@ -172,7 +174,6 @@ require (
 	github.com/ssgreg/nlreturn/v2 v2.2.1 // indirect
 	github.com/stbenjam/no-sprintf-host-port v0.2.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/tetafro/godot v1.5.4 // indirect
 	github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67 // indirect
