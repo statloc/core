@@ -8,7 +8,7 @@
   <a href="https://github.com/statloc/core/issues"><img src="https://img.shields.io/github/issues/statloc/core?style=flat-square&color=purple"></a>
   <a href="https://github.com/statloc/core/pulls"><img src="https://img.shields.io/github/issues-pr/statloc/core?label=pull%20requests&style=flat-square&color=purple"></a>
   <a href="https://github.com/statloc/core/actions/workflows/check.yml/"><img src="https://img.shields.io/github/actions/workflow/status/statloc/core/check.yml?branch=dev/0.1.0&style=flat-square&label=checks&color=purple"></a>
-  <a href="https://github.com/statloc/core/blob/master/go.mod"><img src="https://img.shields.io/badge/go_version-1.24_%7C_1.25-purple?style=flat-square&label=go%20version&color=purple"></a>
+  <a href="https://github.com/statloc/core/blob/master/go.mod"><img src="https://img.shields.io/badge/go_version-1.25-purple?style=flat-square&label=go%20version&color=purple"></a>
 </div>
 
 ### ✏️ About
@@ -37,15 +37,9 @@ func main() {
     result := = fmt.Sprintf(
         `Statistics(total):
 lines of code: %d
-files: %d
-methods: %d
-average lines of code per method: %d
-average lines of code per file: %d`,
+files: %d`,
         total.LOC,
         total.Files,
-        total.Methods,
-        total.LOCPerMethod,
-        total.LOCPerFile,
     )
 
     fmt.Println(results)
