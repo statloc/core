@@ -22,12 +22,13 @@
 2. Fork the repository on GitHub.
 3. Clone your forked repository to your local machine.
 4. Create a new branch for your changes.
-5. Complete an issue and commit it.
+5. Install dependencies with `make build` (required to have `make` and `go` (version from go.mod) installed)
+6. Complete an issue and commit it.
   - Follow the [style guide](https://google.github.io/styleguide/go/guide).
   - Test your code thoroughly.
   - Write clear and concise commit messages.
-6. Push your changes to your forked repository.
-7. Create a pull request to the main repository.
+7. Push your changes to your forked repository.
+8. Create a pull request to the main repository.
   - Pull request will not be merged until it is approved by a maintainer and passes all checks.
 
 *[List of code contributors] is updated weekly.*
