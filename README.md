@@ -1,6 +1,7 @@
 # statloc core
 
 <div>
+    <img src="https://img.shields.io/github/v/release/statloc/core?sort=semver&display_name=release&style=flat-square&label=latest%20release&color=purple">
     <img src="https://img.shields.io/github/v/release/statloc/cli?sort=semver&display_name=release&style=flat-square&label=latest%20release&color=purple">
     <a href="https://github.com/statloc/core/blob/master/go.mod"><img src="https://img.shields.io/badge/go_version-1.24%20|%201.25-purple?style=flat-square&label=go%20version&color=purple"></a>
     <a href="https://github.com/statloc/core/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-coffeeware-purple?style=flat-square&label=license&color=purple"></a>
