@@ -15,5 +15,5 @@ A clear and short description of what you changed
 2. change 2
 3. change 3
 
-📝 Additional context [optional]
+📝 Additional context \[optional]
 Add any other context about the pull request here

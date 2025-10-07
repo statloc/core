@@ -14,7 +14,7 @@ A clear and short description of what the bug is
 - OS:
 - Go version:
 - Library version:
-- Other conditions [optional]:
+- Other conditions \[optional]:
 
 ### 📜 Steps to reproduce
 1. step one
@@ -30,5 +30,5 @@ A clear and concise description of what happened
 ### 🖼️ Screenshots or code snippets
 If applicable, add screenshots or code snippets to help explain your problem.
 
-### 📝 Additional context [optional]
+### 📝 Additional context \[optional]
 Add any other context about the problem here
