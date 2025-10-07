@@ -1,14 +1,12 @@
 # statloc core
 
 <div>
-  <a href="https://github.com/statloc/core/blob/master/CITATION.cff"><img src="https://img.shields.io/github/v/release/statloc/core?sort=semver&display_name=release&style=flat-square&label=stable%20release&color=purple"></a>
-  <a href="https://github.com/statloc/core/blob/master/LICENSE"><img src="https://img.shields.io/github/license/statloc/core?style=flat-square&label=license&color=purple"></a>
-  <a href="https://github.com/statloc/core/stargazers/"><img src="https://img.shields.io/github/stars/statloc/core?style=flat-square&label=stars&color=purple"></a>
-  <a href="https://github.com/statloc/core/forks/"><img src="https://img.shields.io/github/forks/statloc/core?style=flat-square&color=purple"></a>
-  <a href="https://github.com/statloc/core/issues"><img src="https://img.shields.io/github/issues/statloc/core?style=flat-square&color=purple"></a>
-  <a href="https://github.com/statloc/core/pulls"><img src="https://img.shields.io/github/issues-pr/statloc/core?label=pull%20requests&style=flat-square&color=purple"></a>
-  <a href="https://github.com/statloc/core/actions/workflows/check.yml/"><img src="https://img.shields.io/github/actions/workflow/status/statloc/core/check.yml?branch=dev/0.1.0&style=flat-square&label=checks&color=purple"></a>
-  <a href="https://github.com/statloc/core/blob/master/go.mod"><img src="https://img.shields.io/badge/go_version-1.25-purple?style=flat-square&label=go%20version&color=purple"></a>
+    <img src="https://img.shields.io/github/v/release/statloc/cli?sort=semver&display_name=release&style=flat-square&label=latest%20release&color=purple">
+    <a href="https://github.com/statloc/core/blob/master/go.mod"><img src="https://img.shields.io/badge/go_version-1.24%20|%201.25-purple?style=flat-square&label=go%20version&color=purple"></a>
+    <a href="https://github.com/statloc/core/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-coffeeware-purple?style=flat-square&label=license&color=purple"></a>
+    <a href="https://github.com/statloc/core/stargazers/"><img src="https://img.shields.io/github/stars/statloc/core?style=flat-square&label=stars&color=purple"></a>
+    <a href="https://github.com/statloc/core/forks/"><img src="https://img.shields.io/github/forks/statloc/core?style=flat-square&color=purple"></a>
+    <a href="https://github.com/statloc/core/actions/workflows/check.yml/"><img src="https://img.shields.io/github/actions/workflow/status/statloc/core/check.yml?branch=dev/0.1.0&style=flat-square&label=checks&color=purple"></a>
 </div>
 
 ### ✏️ About
