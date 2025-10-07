@@ -6,6 +6,7 @@
 
 - [Code contribution](#code-contribution)
   - Contributing code
+  - Building the project
   - Becoming a maintainer
 - [Reporting a bug](#reporting-a-bug)
   - Unexpected behavior
@@ -32,6 +33,23 @@
   - Pull request will not be merged until it is approved by a maintainer and passes all checks.
 
 *[List of code contributors] is updated weekly.*
+
+**To make a code contribution, build the project:**
+
+Clone from GitHub
+```shell
+git clone git@github.com:statloc/core.git
+```
+
+Install dependencies (requires `make` to be installed)
+```shell
+make build
+```
+
+Run linter and tests
+```shell
+make
+```
 
 **To become a maintainer:**
 
