@@ -8,10 +8,7 @@ import (
 )
 
 func GetStatistics(path string) (*StatisticsResponse, error) {
-    mapping.Load(
-        "assets/components.json",
-        "assets/extensions.json",
-    )
+    mapping.Load(rawComponents, rawExtensions)
 
     list, err := tree.List(path)
 
