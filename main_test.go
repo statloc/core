@@ -34,6 +34,8 @@ func (s *ServiceSuite) TestGetStatistics() {
     assert.Equal(s.T(), s.results["Python"]["Files"], response.Items["Python"].Files)
     assert.Equal(s.T(), s.results["Tests"]["LOC"], response.Items["Tests"].LOC)
     assert.Equal(s.T(), s.results["Tests"]["Files"], response.Items["Tests"].Files)
+    assert.Equal(s.T(), s.results["Total"]["LOC"], response.Items["Total"].LOC)
+    assert.Equal(s.T(), s.results["Total"]["Files"], response.Items["Total"].Files)
 }
 
 func TestServiceSuite(t *testing.T) {

@@ -26,6 +26,8 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
         items[value] = &TableItem{Files: 0, LOC: 0}
 	}
 
+	items["Total"] = &TableItem{Files: 0, LOC: 0}
+
 	statistics := &StatisticsResponse{ Items: items }
 
 	goAroundCalculating(list, statistics, nil)

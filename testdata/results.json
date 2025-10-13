@@ -2,5 +2,6 @@
     "Go": { "Files": 1, "LOC": 8 },
     "Python": { "Files": 1, "LOC": 2 },
     "Rust": { "Files": 1, "LOC": 4 },
-    "Tests": { "Files": 2, "LOC": 6 }
+    "Tests": { "Files": 2, "LOC": 6 },
+    "Total": { "Files": 5, "LOC": 24 }
 }
