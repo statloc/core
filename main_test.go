@@ -1,6 +1,7 @@
 package statloc_test
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -12,17 +13,16 @@ import (
 
 type ServiceSuite struct {
     suite.Suite
-    dir     string
     results map[string]map[string]uint64
 }
 
 func (s *ServiceSuite) SetupSuite() {
-    s.dir = "testdata"
-    s.results = mapping.LoadJSON[map[string]map[string]uint64](filepath.Join(s.dir, "results.json"))
+    rawResults, _ := os.ReadFile(filepath.Join("testdata", "results.json"))
+    s.results = mapping.LoadJSON[map[string]map[string]uint64](string(rawResults))
 }
 
 func (s *ServiceSuite) TestGetStatistics() {
-    response, err := core.GetStatistics(s.dir)
+    response, err := core.GetStatistics("testdata")
 
     assert.Nil(s.T(), err)
 
@@ -34,6 +34,8 @@ func (s *ServiceSuite) TestGetStatistics() {
     assert.Equal(s.T(), s.results["Python"]["Files"], response.Items["Python"].Files)
     assert.Equal(s.T(), s.results["Tests"]["LOC"], response.Items["Tests"].LOC)
     assert.Equal(s.T(), s.results["Tests"]["Files"], response.Items["Tests"].Files)
+    assert.Equal(s.T(), s.results["Total"]["LOC"], response.Items["Total"].LOC)
+    assert.Equal(s.T(), s.results["Total"]["Files"], response.Items["Total"].Files)
 }
 
 func TestServiceSuite(t *testing.T) {

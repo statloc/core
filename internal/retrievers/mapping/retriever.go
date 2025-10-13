@@ -3,7 +3,6 @@ package mapping
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 var (
@@ -11,23 +10,17 @@ var (
     Components ComponentsMapping
 )
 
-func LoadJSON[mapType any](fileName string) mapType {
-    content, err := os.ReadFile(fileName)
-    if err != nil {
-        panic(InvalidJSON{Message: fmt.Sprintf("Error opening JSON at %s", fileName)})
-    }
-
+func LoadJSON[mapType any](content string) mapType {
     var mapping mapType
-    err = json.Unmarshal([]byte(string(content)), &mapping)
+    err := json.Unmarshal([]byte(string(content)), &mapping)
     if err != nil {
-        panic(&InvalidJSON{Message: fmt.Sprintf("Error parsing JSON mapping at %s", fileName)})
+        panic(&InvalidJSON{Message: fmt.Sprintf("Error parsing JSON mapping %s", content)})
     }
-
     return mapping
 }
 
-func Load(componentsPath string, extensionsPath string) (ComponentsMapping, ExtensionsMapping) {
-    Components = LoadJSON[ComponentsMapping](componentsPath)
-    Extensions = LoadJSON[ExtensionsMapping](extensionsPath)
+func Load(rawComponents string, rawExtensions string) (ComponentsMapping, ExtensionsMapping) {
+    Components = LoadJSON[ComponentsMapping](rawComponents)
+    Extensions = LoadJSON[ExtensionsMapping](rawExtensions)
     return Components, Extensions
 }

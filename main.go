@@ -8,10 +8,7 @@ import (
 )
 
 func GetStatistics(path string) (*StatisticsResponse, error) {
-    mapping.Load(
-        "assets/components.json",
-        "assets/extensions.json",
-    )
+    mapping.Load(rawComponents, rawExtensions)
 
     list, err := tree.List(path)
 
@@ -28,6 +25,8 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
 	for _, value := range mapping.Extensions {
         items[value] = &TableItem{Files: 0, LOC: 0}
 	}
+
+	items["Total"] = &TableItem{Files: 0, LOC: 0}
 
 	statistics := &StatisticsResponse{ Items: items }
 

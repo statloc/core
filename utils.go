@@ -1,10 +1,19 @@
 package statloc
 
 import (
+	_ "embed"
 	"path/filepath"
 
 	"github.com/statloc/core/internal/retrievers/mapping"
 	"github.com/statloc/core/internal/retrievers/tree"
+)
+
+var (
+    //go:embed "assets/extensions.json"
+    rawExtensions string
+
+    //go:embed "assets/components.json"
+    rawComponents string
 )
 
 func goAroundCalculating(
@@ -24,6 +33,8 @@ func goAroundCalculating(
 		} else {
             LOC := uint64(1)
             tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
+
+            existingStatistics.Items["Total"].Append(LOC, 1)
 
             fileType, exists := mapping.Extensions[filepath.Ext(node.Name)]
             if exists {
