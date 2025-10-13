@@ -6,7 +6,7 @@
     <a href="https://github.com/statloc/core/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-coffeeware-purple?style=flat-square&label=license&color=purple"></a>
     <a href="https://github.com/statloc/core/stargazers/"><img src="https://img.shields.io/github/stars/statloc/core?style=flat-square&label=stars&color=purple"></a>
     <a href="https://github.com/statloc/core/forks/"><img src="https://img.shields.io/github/forks/statloc/core?style=flat-square&color=purple"></a>
-    <a href="https://github.com/statloc/core/actions/workflows/check.yml/"><img src="https://img.shields.io/github/actions/workflow/status/statloc/core/check.yml?branch=dev/0.1.0&style=flat-square&label=checks&color=purple"></a>
+    <a href="https://github.com/statloc/core/actions/workflows/check.yml/"><img src="https://img.shields.io/github/actions/workflow/status/statloc/core/check.yml?branch=master&style=flat-square&label=checks&color=purple"></a>
 </div>
 
 ### ✏️ About
