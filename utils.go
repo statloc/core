@@ -1,10 +1,19 @@
 package statloc
 
 import (
+	_ "embed"
 	"path/filepath"
 
 	"github.com/statloc/core/internal/retrievers/mapping"
 	"github.com/statloc/core/internal/retrievers/tree"
+)
+
+var (
+    //go:embed "assets/extensions.json"
+    rawExtensions string
+
+    //go:embed "assets/components.json"
+    rawComponents string
 )
 
 func goAroundCalculating(

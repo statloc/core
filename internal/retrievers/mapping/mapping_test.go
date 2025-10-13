@@ -1,6 +1,7 @@
 package mapping_test
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -12,30 +13,31 @@ import (
 
 type MappingSuite struct {
     suite.Suite
-    dir            string
-    extensionsFile string
-    componentsFile string
+    extensions     string
+    components     string
+    broken         string
 }
 
-
 func (s *MappingSuite) SetupSuite() {
-    s.dir = "testdata"
-    s.extensionsFile = filepath.Join("..", "..", "..", "assets", "extensions.json")
-    s.componentsFile = filepath.Join("..", "..", "..", "assets", "components.json")
+    rawExtensions, _ := os.ReadFile(filepath.Join("..", "..", "..", "assets", "extensions.json"))
+    s.extensions = string(rawExtensions)
+    rawComponents, _ := os.ReadFile(filepath.Join("..", "..", "..", "assets", "components.json"))
+    s.components = string(rawComponents)
+    rawBroken, _ := os.ReadFile(filepath.Join("..", "..", "..", "testdata", "broken.json.txt"))
+    s.broken = string(rawBroken)
 }
 
 func (s *MappingSuite) TestLoadJSON() {
-    response := mapping.LoadJSON[map[string]string](s.extensionsFile)
+    response := mapping.LoadJSON[map[string]string](s.extensions)
 
     assert.IsType(s.T(), map[string]string{}, response)
-
-    assert.Panics(s.T(), func() {mapping.LoadJSON[map[string]string](filepath.Join(s.dir, "broken.json.txt"))})
+    assert.Panics(s.T(), func() {mapping.LoadJSON[map[string]string](s.broken)})
 }
 
 func (s *MappingSuite) TestLoadMapping() {
     mapping.Load(
-        s.componentsFile,
-        s.extensionsFile,
+        s.components,
+        s.extensions,
     )
 
     assert.NotNil(s.T(), mapping.Components)
