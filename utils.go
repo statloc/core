@@ -34,6 +34,8 @@ func goAroundCalculating(
             LOC := uint64(1)
             tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
 
+            existingStatistics.Items["Total"].Append(LOC, 1)
+
             fileType, exists := mapping.Extensions[filepath.Ext(node.Name)]
             if exists {
                 existingStatistics.Items[fileType].Append(LOC, 1)
