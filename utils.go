@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"path/filepath"
 
-	"github.com/statloc/core/internal/retrievers/mapping"
-	"github.com/statloc/core/internal/retrievers/tree"
+	"github.com/statloc/core/internal/mapping"
+	"github.com/statloc/core/internal/tree"
 )
 
 var (

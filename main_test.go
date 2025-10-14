@@ -5,10 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	core "github.com/statloc/core"
-	"github.com/statloc/core/internal/retrievers/mapping"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+
+	core "github.com/statloc/core"
+	"github.com/statloc/core/internal/mapping"
 )
 
 type ServiceSuite struct {
