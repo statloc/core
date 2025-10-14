@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/statloc/core/internal/retrievers/tree"
+	"github.com/statloc/core/internal/tree"
 )
 
 type (
@@ -17,16 +17,16 @@ type (
         dir             string
         nonExistingPath string
         file            string
+        fileText        string
         hook            func (
             text    string,
             counter *uint64,
         )
-        fileText        string
     }
 )
 
 func (s *TreeSuite) SetupSuite() {
-	s.dir = "../../../testdata"
+	s.dir = filepath.Join("..", "..", "testdata")
 	s.nonExistingPath = "non_existing_path"
 	s.file = ""
 	s.hook = func(text string, counter *uint64) {

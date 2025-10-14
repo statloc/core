@@ -3,8 +3,8 @@ package statloc
 import (
 	"errors"
 
-	"github.com/statloc/core/internal/retrievers/mapping"
-	"github.com/statloc/core/internal/retrievers/tree"
+	"github.com/statloc/core/internal/mapping"
+	"github.com/statloc/core/internal/tree"
 )
 
 func GetStatistics(path string) (*StatisticsResponse, error) {

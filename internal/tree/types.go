@@ -7,7 +7,7 @@ type (
 	}
 
 	LineHook func(
-		text string,
+		text    string,
 		counter *uint64,
 	)
 

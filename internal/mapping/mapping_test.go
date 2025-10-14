@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/statloc/core/internal/retrievers/mapping"
+	"github.com/statloc/core/internal/mapping"
 )
 
 type MappingSuite struct {
@@ -19,11 +19,11 @@ type MappingSuite struct {
 }
 
 func (s *MappingSuite) SetupSuite() {
-    rawExtensions, _ := os.ReadFile(filepath.Join("..", "..", "..", "assets", "extensions.json"))
+    rawExtensions, _ := os.ReadFile(filepath.Join("..", "..", "assets", "extensions.json"))
     s.extensions = string(rawExtensions)
-    rawComponents, _ := os.ReadFile(filepath.Join("..", "..", "..", "assets", "components.json"))
+    rawComponents, _ := os.ReadFile(filepath.Join("..", "..", "assets", "components.json"))
     s.components = string(rawComponents)
-    rawBroken, _ := os.ReadFile(filepath.Join("..", "..", "..", "testdata", "broken.json.txt"))
+    rawBroken, _ := os.ReadFile(filepath.Join("..", "..", "testdata", "broken.json.txt"))
     s.broken = string(rawBroken)
 }
 
