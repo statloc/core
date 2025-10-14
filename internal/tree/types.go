@@ -11,7 +11,5 @@ type (
 		counter *uint64,
 	)
 
-	ListResponse struct {
-		Nodes []Node
-	}
+	Nodes []Node
 )

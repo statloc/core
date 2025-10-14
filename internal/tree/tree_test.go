@@ -40,11 +40,22 @@ func (s *TreeSuite) SetupSuite() {
 func (s *TreeSuite) TestList() {
     response, err := tree.List(s.dir)
     assert.Nil(s.T(), err)
-    assert.IsType(s.T(), response, tree.ListResponse{})
-    assert.Len(s.T(), response.Nodes, 4)
+    assert.IsType(s.T(), response, tree.Nodes{})
+    assert.Len(s.T(), response, 4)
 
     _, err = tree.List(s.nonExistingPath)
     assert.NotNil(s.T(), err)
+}
+
+func (s *TreeSuite) TestChdir() {
+    err := tree.Chdir("non_existing_dir")
+    assert.NotNil(s.T(), err)
+
+    err = tree.Chdir(filepath.Join("..", "..", "testdata"))
+    assert.Nil(s.T(), err)
+
+    err = tree.Chdir(filepath.Join("..", "internal", "tree"))
+    assert.Nil(s.T(), err)
 }
 
 func (s *TreeSuite) TestReadNodeLineByLine() {
