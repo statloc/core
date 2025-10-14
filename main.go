@@ -1,10 +1,20 @@
 package statloc
 
 import (
+	_ "embed"
 	"errors"
+	"path/filepath"
 
 	"github.com/statloc/core/internal/mapping"
 	"github.com/statloc/core/internal/tree"
+)
+
+var (
+    //go:embed "assets/extensions.json"
+    rawExtensions string
+
+    //go:embed "assets/components.json"
+    rawComponents string
 )
 
 func GetStatistics(path string) (*StatisticsResponse, error) {
@@ -42,4 +52,40 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
 	}
 
 	return statistics, nil
+}
+
+func goAroundCalculating(
+	list               tree.ListResponse,
+	existingStatistics *StatisticsResponse,
+	component          *string,
+) {
+	for _, node := range list.Nodes {
+		if node.IsDir {
+            componentType, exists := mapping.Components[filepath.Base(node.Name)]
+
+            if exists { component = &componentType }
+
+            list, _ = tree.List(node.Name)
+			goAroundCalculating(list, existingStatistics, component)
+
+		} else {
+            LOC := uint64(1)
+            tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
+
+            existingStatistics.Items["Total"].Append(LOC, 1)
+
+            fileType, exists := mapping.Extensions[filepath.Ext(node.Name)]
+            if exists {
+                existingStatistics.Items[fileType].Append(LOC, 1)
+            }
+
+            if component != nil {
+                existingStatistics.Items[*component].Append(LOC, 1)
+            }
+		}
+	}
+}
+
+func proceedLine(text string, counter *uint64) {
+	*counter++
 }
