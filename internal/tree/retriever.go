@@ -3,6 +3,7 @@ package tree
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -12,7 +13,7 @@ func List(path string) (ListResponse, error) {
 
 	var pathError *os.PathError
 	if errors.As(err, &pathError) {
-		return ListResponse{}, &PathError{Path: path}
+		return ListResponse{}, &PathError{Message: fmt.Sprintf("%s is not a directory", path)}
 	}
 
 	entries := []Node{}
