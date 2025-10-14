@@ -30,6 +30,17 @@ func List(path string) (Nodes, error) {
 	return entries, nil
 }
 
+func Chdir(path string) error {
+    err := os.Chdir(path)
+
+    var pathError *os.PathError
+	if errors.As(err, &pathError) {
+		return &PathError{Message: fmt.Sprintf("Directory %s does not exist", path)}
+	}
+
+	return nil
+}
+
 func ReadNodeLineByLine(path string, hook LineHook, counter *uint64) {
 	file, _ := os.Open(path)
 	defer file.Close() // nolint:errcheck
