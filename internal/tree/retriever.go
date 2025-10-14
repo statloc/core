@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-func List(path string) (ListResponse, error) {
+func List(path string) (Nodes, error) {
 	response, err := os.ReadDir(path)
 
 	var pathError *os.PathError
@@ -16,7 +16,7 @@ func List(path string) (ListResponse, error) {
 		return nil, &PathError{Message: fmt.Sprintf("%s is not a directory", path)}
 	}
 
-	entries := ListResponse{}
+	entries := Nodes{}
 	for _, entry := range response {
 		entries = append(
 			entries,

@@ -11,5 +11,5 @@ type (
 		counter *uint64,
 	)
 
-	ListResponse []Node
+	Nodes []Node
 )

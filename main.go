@@ -55,7 +55,7 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
 }
 
 func goAroundCalculating(
-	list               tree.ListResponse,
+	list               tree.Nodes,
 	existingStatistics *StatisticsResponse,
 	component          *string,
 ) {

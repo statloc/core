@@ -40,7 +40,7 @@ func (s *TreeSuite) SetupSuite() {
 func (s *TreeSuite) TestList() {
     response, err := tree.List(s.dir)
     assert.Nil(s.T(), err)
-    assert.IsType(s.T(), response, tree.ListResponse{})
+    assert.IsType(s.T(), response, tree.Nodes{})
     assert.Len(s.T(), response, 4)
 
     _, err = tree.List(s.nonExistingPath)
