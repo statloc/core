@@ -13,10 +13,10 @@ func List(path string) (ListResponse, error) {
 
 	var pathError *os.PathError
 	if errors.As(err, &pathError) {
-		return ListResponse{}, &PathError{Message: fmt.Sprintf("%s is not a directory", path)}
+		return nil, &PathError{Message: fmt.Sprintf("%s is not a directory", path)}
 	}
 
-	entries := []Node{}
+	entries := ListResponse{}
 	for _, entry := range response {
 		entries = append(
 			entries,
@@ -27,7 +27,7 @@ func List(path string) (ListResponse, error) {
 		)
 	}
 
-	return ListResponse{Nodes: entries}, nil
+	return entries, nil
 }
 
 func ReadNodeLineByLine(path string, hook LineHook, counter *uint64) {

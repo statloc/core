@@ -59,7 +59,7 @@ func goAroundCalculating(
 	existingStatistics *StatisticsResponse,
 	component          *string,
 ) {
-	for _, node := range list.Nodes {
+	for _, node := range list {
 		if node.IsDir {
             componentType, exists := mapping.Components[filepath.Base(node.Name)]
 
