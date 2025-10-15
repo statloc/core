@@ -47,6 +47,17 @@ func (s *TreeSuite) TestList() {
     assert.NotNil(s.T(), err)
 }
 
+func (s *TreeSuite) TestChdir() {
+    err := tree.Chdir("non_existing_dir")
+    assert.NotNil(s.T(), err)
+
+    err = tree.Chdir(filepath.Join("..", "..", "testdata"))
+    assert.Nil(s.T(), err)
+
+    err = tree.Chdir(filepath.Join("..", "internal", "tree"))
+    assert.Nil(s.T(), err)
+}
+
 func (s *TreeSuite) TestReadNodeLineByLine() {
     counter := new(uint64)
 
