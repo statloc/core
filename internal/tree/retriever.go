@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
 func List(path string) (Nodes, error) {
@@ -13,7 +12,7 @@ func List(path string) (Nodes, error) {
 
 	var pathError *os.PathError
 	if errors.As(err, &pathError) {
-		return nil, &PathError{Message: fmt.Sprintf("%s is not a directory", path)}
+		return nil, &PathError{Message: fmt.Sprintf("\"%s\" is not a directory", path)}
 	}
 
 	entries := Nodes{}
@@ -21,7 +20,7 @@ func List(path string) (Nodes, error) {
 		entries = append(
 			entries,
 			Node{
-				Name:  filepath.Join(path, entry.Name()),
+				Name:  entry.Name(),
 				IsDir: entry.IsDir(),
 			},
 		)
@@ -35,7 +34,7 @@ func Chdir(path string) error {
 
     var pathError *os.PathError
 	if errors.As(err, &pathError) {
-		return &PathError{Message: fmt.Sprintf("Directory %s does not exist", path)}
+	    return &PathError{Message: fmt.Sprintf("\"%s\" is not a directory", path)}
 	}
 
 	return nil

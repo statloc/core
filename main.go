@@ -40,7 +40,9 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
 
 	statistics := &StatisticsResponse{ Items: items }
 
+	tree.Chdir(path) //nolint:errcheck
 	goAroundCalculating(list, statistics, nil)
+	tree.Chdir("..") //nolint:errcheck
 
 	total := TableItem{Files: 0, LOC: 0}
 	for title, item := range statistics.Items {
@@ -66,7 +68,10 @@ func goAroundCalculating(
             if exists { component = &componentType }
 
             list, _ = tree.List(node.Name)
+
+            tree.Chdir(node.Name) //nolint:errcheck
 			goAroundCalculating(list, existingStatistics, component)
+			tree.Chdir("..") //nolint:errcheck
 
 		} else {
             LOC := uint64(1)
