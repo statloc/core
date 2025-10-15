@@ -6,8 +6,12 @@ type (
         Files uint64
     }
 
+    Items map[string]*TableItem
+
     StatisticsResponse struct {
-        Items map[string]*TableItem // item's title as a key
+        Languages  Items
+        Components Items
+        Total      TableItem
     }
 )
 
