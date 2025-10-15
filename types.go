@@ -8,7 +8,7 @@ type (
 
     Items map[string]*TableItem
 
-    StatisticsResponse struct {
+    Statistics struct {
         Languages  Items
         Components Items
         Total      TableItem
