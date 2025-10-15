@@ -27,16 +27,16 @@ func (s *ServiceSuite) TestGetStatistics() {
 
     assert.Nil(s.T(), err)
 
-    assert.Equal(s.T(), s.results["Go"]["LOC"], response.Items["Go"].LOC)
-    assert.Equal(s.T(), s.results["Go"]["Files"], response.Items["Go"].Files)
-    assert.Equal(s.T(), s.results["Rust"]["LOC"], response.Items["Rust"].LOC)
-    assert.Equal(s.T(), s.results["Rust"]["Files"], response.Items["Rust"].Files)
-    assert.Equal(s.T(), s.results["Python"]["LOC"], response.Items["Python"].LOC)
-    assert.Equal(s.T(), s.results["Python"]["Files"], response.Items["Python"].Files)
-    assert.Equal(s.T(), s.results["Tests"]["LOC"], response.Items["Tests"].LOC)
-    assert.Equal(s.T(), s.results["Tests"]["Files"], response.Items["Tests"].Files)
-    assert.Equal(s.T(), s.results["Total"]["LOC"], response.Items["Total"].LOC)
-    assert.Equal(s.T(), s.results["Total"]["Files"], response.Items["Total"].Files)
+    assert.Equal(s.T(), s.results["Go"]["LOC"], response.Languages["Go"].LOC)
+    assert.Equal(s.T(), s.results["Go"]["Files"], response.Languages["Go"].Files)
+    assert.Equal(s.T(), s.results["Rust"]["LOC"], response.Languages["Rust"].LOC)
+    assert.Equal(s.T(), s.results["Rust"]["Files"], response.Languages["Rust"].Files)
+    assert.Equal(s.T(), s.results["Python"]["LOC"], response.Languages["Python"].LOC)
+    assert.Equal(s.T(), s.results["Python"]["Files"], response.Languages["Python"].Files)
+    assert.Equal(s.T(), s.results["Tests"]["LOC"], response.Components["Tests"].LOC)
+    assert.Equal(s.T(), s.results["Tests"]["Files"], response.Components["Tests"].Files)
+    assert.Equal(s.T(), s.results["Total"]["LOC"], response.Total.LOC)
+    assert.Equal(s.T(), s.results["Total"]["Files"], response.Total.Files)
 }
 
 func TestServiceSuite(t *testing.T) {

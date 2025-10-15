@@ -27,33 +27,39 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
 		return nil, &PathError{Path: path}
 	}
 
-	items := make(map[string]*TableItem)
+	languages := make(Items)
+	components := make(Items)
+	total := TableItem{Files: 0, LOC: 0}
 
-	for _, value := range mapping.Components {
-        items[value] = &TableItem{Files: 0, LOC: 0}
-	}
 	for _, value := range mapping.Extensions {
-        items[value] = &TableItem{Files: 0, LOC: 0}
+        languages[value] = &TableItem{Files: 0, LOC: 0}
+	}
+	for _, value := range mapping.Components {
+        components[value] = &TableItem{Files: 0, LOC: 0}
 	}
 
-	items["Total"] = &TableItem{Files: 0, LOC: 0}
-
-	statistics := &StatisticsResponse{ Items: items }
+	statistics := &StatisticsResponse{
+		Languages:  languages,
+		Components: components,
+		Total:      total,
+	}
 
 	tree.Chdir(path) //nolint:errcheck
 	goAroundCalculating(list, statistics, nil)
 	tree.Chdir("..") //nolint:errcheck
 
-	total := TableItem{Files: 0, LOC: 0}
-	for title, item := range statistics.Items {
-	    if item.Files == 0 {
-			delete(statistics.Items, title)
-		} else {
-            total.Append(item.LOC, item.Files)
-		}
-	}
+	cleanStatistics(statistics.Languages)
+	cleanStatistics(statistics.Components)
 
 	return statistics, nil
+}
+
+func cleanStatistics(items Items) {
+   	for title, item := range items {
+	    if item.Files == 0 {
+			delete(items, title)
+		}
+	}
 }
 
 func goAroundCalculating(
@@ -63,9 +69,11 @@ func goAroundCalculating(
 ) {
 	for _, node := range list {
 		if node.IsDir {
-            componentType, exists := mapping.Components[filepath.Base(node.Name)]
+            newComponent, exists := mapping.Components[filepath.Base(node.Name)]
 
-            if exists { component = &componentType }
+            if exists {
+                component = &newComponent
+            }
 
             list, _ = tree.List(node.Name)
 
@@ -74,18 +82,22 @@ func goAroundCalculating(
 			tree.Chdir("..") //nolint:errcheck
 
 		} else {
-            LOC := uint64(1)
-            tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
-
-            existingStatistics.Items["Total"].Append(LOC, 1)
-
-            fileType, exists := mapping.Extensions[filepath.Ext(node.Name)]
+		    language, exists := mapping.Extensions[filepath.Ext(node.Name)]
             if exists {
-                existingStatistics.Items[fileType].Append(LOC, 1)
-            }
+                LOC := uint64(1)
+                tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
 
-            if component != nil {
-                existingStatistics.Items[*component].Append(LOC, 1)
+                existingStatistics.Total.Append(LOC, 1)
+                existingStatistics.Languages[language].Append(LOC, 1)
+
+                newComponent, exists := mapping.Components[filepath.Base(node.Name)]
+
+                if exists {
+                    component = &newComponent
+                }
+                if component != nil {
+                    existingStatistics.Components[*component].Append(LOC, 1)
+                }
             }
 		}
 	}
