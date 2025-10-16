@@ -17,7 +17,7 @@ var (
     rawComponents string
 )
 
-func GetStatistics(path string) (*StatisticsResponse, error) {
+func GetStatistics(path string) (*Statistics, error) {
     mapping.Load(rawComponents, rawExtensions)
 
     list, err := tree.List(path)
@@ -38,7 +38,7 @@ func GetStatistics(path string) (*StatisticsResponse, error) {
         components[value] = &TableItem{Files: 0, LOC: 0}
 	}
 
-	statistics := &StatisticsResponse{
+	statistics := &Statistics{
 		Languages:  languages,
 		Components: components,
 		Total:      total,
@@ -64,7 +64,7 @@ func cleanStatistics(items Items) {
 
 func goAroundCalculating(
 	list               tree.Nodes,
-	existingStatistics *StatisticsResponse,
+	existingStatistics *Statistics,
 	component          *string,
 ) {
 	for _, node := range list {
