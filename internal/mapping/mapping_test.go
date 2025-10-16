@@ -41,7 +41,7 @@ func (s *MappingSuite) TestLoadMapping() {
     )
 
     assert.NotNil(s.T(), mapping.Components)
-    assert.NotNil(s.T(), mapping.Extensions)
+    assert.NotNil(s.T(), mapping.Languages)
 }
 
 func TestMappingSuite(t *testing.T) {

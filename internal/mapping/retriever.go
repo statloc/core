@@ -6,7 +6,7 @@ import (
 )
 
 var (
-    Extensions ExtensionsMapping
+    Languages  LanguagesMapping
     Components ComponentsMapping
 )
 
@@ -19,8 +19,8 @@ func LoadJSON[mapType any](content string) mapType {
     return mapping
 }
 
-func Load(rawComponents string, rawExtensions string) (ComponentsMapping, ExtensionsMapping) {
+func Load(rawComponents string, rawExtensions string) (ComponentsMapping, LanguagesMapping) {
     Components = LoadJSON[ComponentsMapping](rawComponents)
-    Extensions = LoadJSON[ExtensionsMapping](rawExtensions)
-    return Components, Extensions
+    Languages = LoadJSON[LanguagesMapping](rawExtensions)
+    return Components, Languages
 }
