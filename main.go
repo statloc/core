@@ -10,15 +10,15 @@ import (
 )
 
 var (
-    //go:embed "assets/extensions.json"
-    rawExtensions string
+    //go:embed "assets/languages.json"
+    rawLanguages string
 
     //go:embed "assets/components.json"
     rawComponents string
 )
 
 func GetStatistics(path string) (*Statistics, error) {
-    mapping.Load(rawComponents, rawExtensions)
+    mapping.Load(rawComponents, rawLanguages)
 
     list, err := tree.List(path)
 
@@ -31,7 +31,7 @@ func GetStatistics(path string) (*Statistics, error) {
 	components := make(Items)
 	total := TableItem{Files: 0, LOC: 0}
 
-	for _, value := range mapping.Extensions {
+	for _, value := range mapping.Languages {
         languages[value] = &TableItem{Files: 0, LOC: 0}
 	}
 	for _, value := range mapping.Components {
@@ -82,7 +82,7 @@ func goAroundCalculating(
 			tree.Chdir("..") //nolint:errcheck
 
 		} else {
-		    language, exists := mapping.Extensions[filepath.Ext(node.Name)]
+		    language, exists := mapping.Languages[filepath.Ext(node.Name)]
             if exists {
                 LOC := uint64(1)
                 tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
@@ -103,6 +103,6 @@ func goAroundCalculating(
 	}
 }
 
-func proceedLine(text string, counter *uint64) {
+func proceedLine(line string, counter *uint64) {
 	*counter++
 }

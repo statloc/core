@@ -19,7 +19,7 @@ type MappingSuite struct {
 }
 
 func (s *MappingSuite) SetupSuite() {
-    rawExtensions, _ := os.ReadFile(filepath.Join("..", "..", "assets", "extensions.json"))
+    rawExtensions, _ := os.ReadFile(filepath.Join("..", "..", "assets", "languages.json"))
     s.extensions = string(rawExtensions)
     rawComponents, _ := os.ReadFile(filepath.Join("..", "..", "assets", "components.json"))
     s.components = string(rawComponents)
@@ -41,7 +41,7 @@ func (s *MappingSuite) TestLoadMapping() {
     )
 
     assert.NotNil(s.T(), mapping.Components)
-    assert.NotNil(s.T(), mapping.Extensions)
+    assert.NotNil(s.T(), mapping.Languages)
 }
 
 func TestMappingSuite(t *testing.T) {
