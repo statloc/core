@@ -1,9 +1,13 @@
 {
-    "Go": { "Files": 1, "LOC": 8 },
-    "Python": { "Files": 2, "LOC": 4 },
-    "Rust": { "Files": 2, "LOC": 8 },
-    "C++": { "Files": 2, "LOC": 8 },
-    "Tests": { "Files": 3, "LOC": 10 },
-    "Controllers": { "Files": 2, "LOC": 8 },
+    "Languages": {
+        "Go": { "Files": 1, "LOC": 8 },
+        "Python": { "Files": 2, "LOC": 4 },
+        "Rust": { "Files": 2, "LOC": 8 },
+        "C++": { "Files": 2, "LOC": 8 }
+    },
+    "Components": {
+        "Tests": { "Files": 3, "LOC": 10 },
+        "Controllers": { "Files": 2, "LOC": 8 }
+    },
     "Total": { "Files": 7, "LOC": 28 }
 }
