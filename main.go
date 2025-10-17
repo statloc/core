@@ -6,80 +6,76 @@ import (
 	"path/filepath"
 
 	"github.com/statloc/core/internal/mapping"
+	"github.com/statloc/core/internal/matching"
 	"github.com/statloc/core/internal/tree"
 )
 
 var (
     //go:embed "assets/languages.json"
-    rawLanguages string
+    rawLanguagesMapping  string
 
     //go:embed "assets/components.json"
-    rawComponents string
+    rawComponentsMapping string
 )
 
-func GetStatistics(path string) (*Statistics, error) {
-    mapping.Load(rawComponents, rawLanguages)
+func GetStatistics(path string) (statistics Statistics, err error) {
+    mapping.Load(rawComponentsMapping, rawLanguagesMapping)
 
     list, err := tree.List(path)
 
 	var treePathError *tree.PathError
 	if errors.As(err, &treePathError) {
-		return nil, &PathError{Path: path}
+	    err = &PathError{Path: path}
+		return
 	}
 
-	languages := make(Items)
-	components := make(Items)
-	total := TableItem{Files: 0, LOC: 0}
-
-	for _, value := range mapping.Languages {
-        languages[value] = &TableItem{Files: 0, LOC: 0}
-	}
-	for _, value := range mapping.Components {
-        components[value] = &TableItem{Files: 0, LOC: 0}
+	statistics = Statistics{
+		Languages:  initItems(mapping.Languages),
+		Components: initItems(mapping.Components),
+		Total:      TableItem{Files: 0, LOC: 0},
 	}
 
-	statistics := &Statistics{
-		Languages:  languages,
-		Components: components,
-		Total:      total,
+	err = nil
+
+	componentsSet := &componentSet{
+	    Elements: make(map[string]struct{}),
+		Tail:     nil,
 	}
 
 	tree.Chdir(path) //nolint:errcheck
-	goAroundCalculating(list, statistics, nil)
+	goAroundCalculating(list, &statistics, nil, componentsSet)
 	tree.Chdir("..") //nolint:errcheck
 
 	cleanStatistics(statistics.Languages)
 	cleanStatistics(statistics.Components)
 
-	return statistics, nil
-}
-
-func cleanStatistics(items Items) {
-   	for title, item := range items {
-	    if item.Files == 0 {
-			delete(items, title)
-		}
-	}
+	return
 }
 
 func goAroundCalculating(
-	list               tree.Nodes,
-	existingStatistics *Statistics,
-	component          *string,
+	list          tree.Nodes,
+	statistics    *Statistics,
+	tailComponent *component,
+	componentsSet *componentSet,
 ) {
 	for _, node := range list {
 		if node.IsDir {
-            newComponent, exists := mapping.Components[filepath.Base(node.Name)]
+            newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
 
+            exists = exists && !componentsSet.In(newComponentTitle)
             if exists {
-                component = &newComponent
+                tailComponent = componentsSet.Add(newComponentTitle)
             }
 
             list, _ = tree.List(node.Name)
 
             tree.Chdir(node.Name) //nolint:errcheck
-			goAroundCalculating(list, existingStatistics, component)
+			goAroundCalculating(list, statistics, tailComponent, componentsSet)
 			tree.Chdir("..") //nolint:errcheck
+
+			if exists {
+				componentsSet.Pop()
+			}
 
 		} else {
 		    language, exists := mapping.Languages[filepath.Ext(node.Name)]
@@ -87,18 +83,35 @@ func goAroundCalculating(
                 LOC := uint64(1)
                 tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
 
-                existingStatistics.Total.Append(LOC, 1)
-                existingStatistics.Languages[language].Append(LOC, 1)
+                statistics.Total.Append(LOC, 1)
+                statistics.Languages[language].Append(LOC, 1)
 
-                newComponent, exists := mapping.Components[filepath.Base(node.Name)]
+                newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
 
-                if exists {
-                    component = &newComponent
+                if exists && !componentsSet.In(newComponentTitle) {
+                    statistics.Components[newComponentTitle].Append(LOC, 1)
                 }
-                if component != nil {
-                    existingStatistics.Components[*component].Append(LOC, 1)
+
+                for componentTitle := range componentsSet.Elements {
+                    statistics.Components[componentTitle].Append(LOC, 1)
                 }
             }
+		}
+	}
+}
+
+func initItems(mapping map[string]string) (items Items) {
+   	items = make(Items)
+    for _, value := range mapping {
+        items[value] = &TableItem{Files: 0, LOC: 0}
+	}
+	return
+}
+
+func cleanStatistics(items Items) {
+   	for title, item := range items {
+	    if item.Files == 0 {
+			delete(items, title)
 		}
 	}
 }

@@ -12,33 +12,35 @@ import (
 	"github.com/statloc/core/internal/mapping"
 )
 
-type ServiceSuite struct {
+type MainSuite struct {
     suite.Suite
-    results map[string]map[string]uint64
+    results core.Statistics
 }
 
-func (s *ServiceSuite) SetupSuite() {
+func (s *MainSuite) SetupSuite() {
     rawResults, _ := os.ReadFile(filepath.Join("testdata", "results.json"))
-    s.results = mapping.LoadJSON[map[string]map[string]uint64](string(rawResults))
+    s.results = mapping.LoadJSON[core.Statistics](string(rawResults))
 }
 
-func (s *ServiceSuite) TestGetStatistics() {
+func (s *MainSuite) TestGetStatistics() {
     response, err := core.GetStatistics("testdata")
 
     assert.Nil(s.T(), err)
+    assert.NotPanics(s.T(), func() {core.GetStatistics("testdata")}) //nolint:errcheck
 
-    assert.Equal(s.T(), s.results["Go"]["LOC"], response.Languages["Go"].LOC)
-    assert.Equal(s.T(), s.results["Go"]["Files"], response.Languages["Go"].Files)
-    assert.Equal(s.T(), s.results["Rust"]["LOC"], response.Languages["Rust"].LOC)
-    assert.Equal(s.T(), s.results["Rust"]["Files"], response.Languages["Rust"].Files)
-    assert.Equal(s.T(), s.results["Python"]["LOC"], response.Languages["Python"].LOC)
-    assert.Equal(s.T(), s.results["Python"]["Files"], response.Languages["Python"].Files)
-    assert.Equal(s.T(), s.results["Tests"]["LOC"], response.Components["Tests"].LOC)
-    assert.Equal(s.T(), s.results["Tests"]["Files"], response.Components["Tests"].Files)
-    assert.Equal(s.T(), s.results["Total"]["LOC"], response.Total.LOC)
-    assert.Equal(s.T(), s.results["Total"]["Files"], response.Total.Files)
+    for title, item := range s.results.Components {
+        println(title)
+        assert.Equal(s.T(), item.LOC, response.Components[title].LOC)
+        assert.Equal(s.T(), item.Files, response.Components[title].Files)
+    }
+    for title, item := range s.results.Languages{
+        assert.Equal(s.T(), item.LOC, response.Languages[title].LOC)
+        assert.Equal(s.T(), item.Files, response.Languages[title].Files)
+    }
+    assert.Equal(s.T(), s.results.Total.LOC, response.Total.LOC)
+    assert.Equal(s.T(), s.results.Total.Files, response.Total.Files)
 }
 
-func TestServiceSuite(t *testing.T) {
-	suite.Run(t, new(ServiceSuite))
+func TestMainSuite(t *testing.T) {
+	suite.Run(t, new(MainSuite))
 }
