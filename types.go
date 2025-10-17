@@ -27,9 +27,8 @@ type (
 
 func (s *componentSet) Add(title string) *component {
     s.Elements[title] = struct{}{}
-    newComponent := &component{Title: title, Prev: s.Tail}
-    s.Tail = newComponent
-    return newComponent
+    s.Tail = &component{Title: title, Prev: s.Tail}
+    return s.Tail
 }
 
 func (s *componentSet) Pop() {

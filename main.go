@@ -35,7 +35,7 @@ func GetStatistics(path string) (*Statistics, error) {
 
 	componentsSet := &componentSet{
 	    Elements: make(map[string]struct{}),
-		Tail: nil,
+		Tail:     nil,
 	}
 
 	tree.Chdir(path) //nolint:errcheck
