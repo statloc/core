@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/statloc/core/internal/mapping"
+	"github.com/statloc/core/internal/matching"
 	"github.com/statloc/core/internal/tree"
 )
 
@@ -17,21 +18,24 @@ var (
     rawComponentsMapping string
 )
 
-func GetStatistics(path string) (*Statistics, error) {
+func GetStatistics(path string) (statistics Statistics, err error) {
     mapping.Load(rawComponentsMapping, rawLanguagesMapping)
 
     list, err := tree.List(path)
 
 	var treePathError *tree.PathError
 	if errors.As(err, &treePathError) {
-		return nil, &PathError{Path: path}
+	    err = &PathError{Path: path}
+		return
 	}
 
-	statistics := &Statistics{
+	statistics = Statistics{
 		Languages:  initItems(mapping.Languages),
 		Components: initItems(mapping.Components),
 		Total:      TableItem{Files: 0, LOC: 0},
 	}
+
+	err = nil
 
 	componentsSet := &componentSet{
 	    Elements: make(map[string]struct{}),
@@ -39,13 +43,13 @@ func GetStatistics(path string) (*Statistics, error) {
 	}
 
 	tree.Chdir(path) //nolint:errcheck
-	goAroundCalculating(list, statistics, nil, componentsSet)
+	goAroundCalculating(list, &statistics, nil, componentsSet)
 	tree.Chdir("..") //nolint:errcheck
 
 	cleanStatistics(statistics.Languages)
 	cleanStatistics(statistics.Components)
 
-	return statistics, nil
+	return
 }
 
 func goAroundCalculating(
@@ -56,7 +60,7 @@ func goAroundCalculating(
 ) {
 	for _, node := range list {
 		if node.IsDir {
-            newComponentTitle, exists := mapping.Components[filepath.Base(node.Name)]
+            newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
 
             exists = exists && !componentsSet.In(newComponentTitle)
             if exists {
@@ -82,7 +86,7 @@ func goAroundCalculating(
                 statistics.Total.Append(LOC, 1)
                 statistics.Languages[language].Append(LOC, 1)
 
-                newComponentTitle, exists := mapping.Components[filepath.Base(node.Name)]
+                newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
 
                 if exists && !componentsSet.In(newComponentTitle) {
                     statistics.Components[newComponentTitle].Append(LOC, 1)
@@ -96,12 +100,12 @@ func goAroundCalculating(
 	}
 }
 
-func initItems(mapping_ map[string]string) Items {
-   	items := make(Items)
-    for _, value := range mapping_ {
+func initItems(mapping map[string]string) (items Items) {
+   	items = make(Items)
+    for _, value := range mapping {
         items[value] = &TableItem{Files: 0, LOC: 0}
 	}
-	return items
+	return
 }
 
 func cleanStatistics(items Items) {
