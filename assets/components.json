@@ -1,3 +1,4 @@
 {
-    "tests": "Tests"
+    "tests": "Tests",
+    "controllers": "Controllers"
 }
