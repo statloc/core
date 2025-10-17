@@ -1,4 +1,4 @@
 {
-    "tests": "Tests",
-    "controllers": "Controllers"
+    "^([Tt]ests|.*_test|test_.*)$": "Tests",
+    "^(.*[Cc]ontrollers?)$": "Controllers"
 }
