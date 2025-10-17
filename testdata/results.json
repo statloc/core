@@ -2,6 +2,8 @@
     "Go": { "Files": 1, "LOC": 8 },
     "Python": { "Files": 1, "LOC": 2 },
     "Rust": { "Files": 1, "LOC": 4 },
-    "Tests": { "Files": 2, "LOC": 6 },
-    "Total": { "Files": 3, "LOC": 14 }
+    "C++": { "Files": 1, "LOC": 4 },
+    "Tests": { "Files": 3, "LOC": 10 },
+    "Controllers": { "Files": 1, "LOC": 4 },
+    "Total": { "Files": 4, "LOC": 18 }
 }
