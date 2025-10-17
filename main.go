@@ -11,14 +11,14 @@ import (
 
 var (
     //go:embed "assets/languages.json"
-    rawLanguages string
+    rawLanguagesMapping  string
 
     //go:embed "assets/components.json"
-    rawComponents string
+    rawComponentsMapping string
 )
 
 func GetStatistics(path string) (*Statistics, error) {
-    mapping.Load(rawComponents, rawLanguages)
+    mapping.Load(rawComponentsMapping, rawLanguagesMapping)
 
     list, err := tree.List(path)
 
@@ -27,25 +27,19 @@ func GetStatistics(path string) (*Statistics, error) {
 		return nil, &PathError{Path: path}
 	}
 
-	languages := make(Items)
-	components := make(Items)
-	total := TableItem{Files: 0, LOC: 0}
-
-	for _, value := range mapping.Languages {
-        languages[value] = &TableItem{Files: 0, LOC: 0}
-	}
-	for _, value := range mapping.Components {
-        components[value] = &TableItem{Files: 0, LOC: 0}
-	}
-
 	statistics := &Statistics{
-		Languages:  languages,
-		Components: components,
-		Total:      total,
+		Languages:  initItems(mapping.Languages),
+		Components: initItems(mapping.Components),
+		Total:      TableItem{Files: 0, LOC: 0},
+	}
+
+	componentsSet := &componentSet{
+	    Elements: make(map[string]struct{}),
+		Tail: nil,
 	}
 
 	tree.Chdir(path) //nolint:errcheck
-	goAroundCalculating(list, statistics, nil)
+	goAroundCalculating(list, statistics, nil, componentsSet)
 	tree.Chdir("..") //nolint:errcheck
 
 	cleanStatistics(statistics.Languages)
@@ -54,32 +48,30 @@ func GetStatistics(path string) (*Statistics, error) {
 	return statistics, nil
 }
 
-func cleanStatistics(items Items) {
-   	for title, item := range items {
-	    if item.Files == 0 {
-			delete(items, title)
-		}
-	}
-}
-
 func goAroundCalculating(
-	list               tree.Nodes,
-	existingStatistics *Statistics,
-	component          *string,
+	list          tree.Nodes,
+	statistics    *Statistics,
+	tailComponent *component,
+	componentsSet *componentSet,
 ) {
 	for _, node := range list {
 		if node.IsDir {
-            newComponent, exists := mapping.Components[filepath.Base(node.Name)]
+            newComponentTitle, exists := mapping.Components[filepath.Base(node.Name)]
 
+            exists = exists && !componentsSet.In(newComponentTitle)
             if exists {
-                component = &newComponent
+                tailComponent = componentsSet.Add(newComponentTitle)
             }
 
             list, _ = tree.List(node.Name)
 
             tree.Chdir(node.Name) //nolint:errcheck
-			goAroundCalculating(list, existingStatistics, component)
+			goAroundCalculating(list, statistics, tailComponent, componentsSet)
 			tree.Chdir("..") //nolint:errcheck
+
+			if exists {
+				componentsSet.Pop()
+			}
 
 		} else {
 		    language, exists := mapping.Languages[filepath.Ext(node.Name)]
@@ -87,18 +79,35 @@ func goAroundCalculating(
                 LOC := uint64(1)
                 tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
 
-                existingStatistics.Total.Append(LOC, 1)
-                existingStatistics.Languages[language].Append(LOC, 1)
+                statistics.Total.Append(LOC, 1)
+                statistics.Languages[language].Append(LOC, 1)
 
-                newComponent, exists := mapping.Components[filepath.Base(node.Name)]
+                newComponentTitle, exists := mapping.Components[filepath.Base(node.Name)]
 
-                if exists {
-                    component = &newComponent
+                if exists && !componentsSet.In(newComponentTitle) {
+                    statistics.Components[newComponentTitle].Append(LOC, 1)
                 }
-                if component != nil {
-                    existingStatistics.Components[*component].Append(LOC, 1)
+
+                for componentTitle := range componentsSet.Elements {
+                    statistics.Components[componentTitle].Append(LOC, 1)
                 }
             }
+		}
+	}
+}
+
+func initItems(mapping_ map[string]string) Items {
+   	items := make(Items)
+    for _, value := range mapping_ {
+        items[value] = &TableItem{Files: 0, LOC: 0}
+	}
+	return items
+}
+
+func cleanStatistics(items Items) {
+   	for title, item := range items {
+	    if item.Files == 0 {
+			delete(items, title)
 		}
 	}
 }
