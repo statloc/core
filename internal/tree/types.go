@@ -7,11 +7,9 @@ type (
 	}
 
 	LineHook func(
-		text string,
+		text    string,
 		counter *uint64,
 	)
 
-	ListResponse struct {
-		Nodes []Node
-	}
+	Nodes []Node
 )

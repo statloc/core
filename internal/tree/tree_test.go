@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/statloc/core/internal/retrievers/tree"
+	"github.com/statloc/core/internal/tree"
 )
 
 type (
@@ -17,16 +17,16 @@ type (
         dir             string
         nonExistingPath string
         file            string
+        fileText        string
         hook            func (
             text    string,
             counter *uint64,
         )
-        fileText        string
     }
 )
 
 func (s *TreeSuite) SetupSuite() {
-	s.dir = "../../../testdata"
+	s.dir = filepath.Join("..", "..", "testdata")
 	s.nonExistingPath = "non_existing_path"
 	s.file = ""
 	s.hook = func(text string, counter *uint64) {
@@ -40,11 +40,22 @@ func (s *TreeSuite) SetupSuite() {
 func (s *TreeSuite) TestList() {
     response, err := tree.List(s.dir)
     assert.Nil(s.T(), err)
-    assert.IsType(s.T(), response, tree.ListResponse{})
-    assert.Len(s.T(), response.Nodes, 4)
+    assert.IsType(s.T(), response, tree.Nodes{})
+    assert.Len(s.T(), response, 5)
 
     _, err = tree.List(s.nonExistingPath)
     assert.NotNil(s.T(), err)
+}
+
+func (s *TreeSuite) TestChdir() {
+    err := tree.Chdir("non_existing_dir")
+    assert.NotNil(s.T(), err)
+
+    err = tree.Chdir(filepath.Join("..", "..", "testdata"))
+    assert.Nil(s.T(), err)
+
+    err = tree.Chdir(filepath.Join("..", "internal", "tree"))
+    assert.Nil(s.T(), err)
 }
 
 func (s *TreeSuite) TestReadNodeLineByLine() {

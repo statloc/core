@@ -1,45 +1,121 @@
 package statloc
 
 import (
+	_ "embed"
 	"errors"
+	"path/filepath"
 
-	"github.com/statloc/core/internal/retrievers/mapping"
-	"github.com/statloc/core/internal/retrievers/tree"
+	"github.com/statloc/core/internal/mapping"
+	"github.com/statloc/core/internal/matching"
+	"github.com/statloc/core/internal/tree"
 )
 
-func GetStatistics(path string) (*StatisticsResponse, error) {
-    mapping.Load(rawComponents, rawExtensions)
+var (
+    //go:embed "assets/languages.json"
+    rawLanguagesMapping  string
+
+    //go:embed "assets/components.json"
+    rawComponentsMapping string
+)
+
+func GetStatistics(path string) (statistics Statistics, err error) {
+    mapping.Load(rawComponentsMapping, rawLanguagesMapping)
 
     list, err := tree.List(path)
 
 	var treePathError *tree.PathError
 	if errors.As(err, &treePathError) {
-		return nil, &PathError{Path: path}
+	    err = &PathError{Path: path}
+		return
 	}
 
-	items := make(map[string]*TableItem)
-
-	for _, value := range mapping.Components {
-        items[value] = &TableItem{Files: 0, LOC: 0}
-	}
-	for _, value := range mapping.Extensions {
-        items[value] = &TableItem{Files: 0, LOC: 0}
+	statistics = Statistics{
+		Languages:  initItems(mapping.Languages),
+		Components: initItems(mapping.Components),
+		Total:      TableItem{Files: 0, LOC: 0},
 	}
 
-	items["Total"] = &TableItem{Files: 0, LOC: 0}
+	err = nil
 
-	statistics := &StatisticsResponse{ Items: items }
+	componentsSet := &componentSet{
+	    Elements: make(map[string]struct{}),
+		Tail:     nil,
+	}
 
-	goAroundCalculating(list, statistics, nil)
+	tree.Chdir(path) //nolint:errcheck
+	goAroundCalculating(list, &statistics, nil, componentsSet)
+	tree.Chdir("..") //nolint:errcheck
 
-	total := TableItem{Files: 0, LOC: 0}
-	for title, item := range statistics.Items {
-	    if item.Files == 0 {
-			delete(statistics.Items, title)
+	cleanStatistics(statistics.Languages)
+	cleanStatistics(statistics.Components)
+
+	return
+}
+
+func goAroundCalculating(
+	list          tree.Nodes,
+	statistics    *Statistics,
+	tailComponent *component,
+	componentsSet *componentSet,
+) {
+	for _, node := range list {
+		if node.IsDir {
+            newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
+
+            exists = exists && !componentsSet.In(newComponentTitle)
+            if exists {
+                tailComponent = componentsSet.Add(newComponentTitle)
+            }
+
+            list, _ = tree.List(node.Name)
+
+            tree.Chdir(node.Name) //nolint:errcheck
+			goAroundCalculating(list, statistics, tailComponent, componentsSet)
+			tree.Chdir("..") //nolint:errcheck
+
+			if exists {
+				componentsSet.Pop()
+			}
+
 		} else {
-            total.Append(item.LOC, item.Files)
+		    language, exists := mapping.Languages[filepath.Ext(node.Name)]
+            if exists {
+                LOC := uint64(1)
+                tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
+
+                statistics.Total.Append(LOC, 1)
+                statistics.Languages[language].Append(LOC, 1)
+
+                newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
+
+                if exists && !componentsSet.In(newComponentTitle) {
+                    statistics.Components[newComponentTitle].Append(LOC, 1)
+                }
+
+                for componentTitle := range componentsSet.Elements {
+                    statistics.Components[componentTitle].Append(LOC, 1)
+                }
+            }
 		}
 	}
+}
 
-	return statistics, nil
+func initItems(mapping map[string]string) (items Items) {
+   	items = make(Items)
+    for _, value := range mapping {
+        items[value] = &TableItem{Files: 0, LOC: 0}
+	}
+	return
+}
+
+func cleanStatistics(items Items) {
+   	for title, item := range items {
+	    if item.Files == 0 {
+			delete(items, title)
+		}
+	}
+}
+
+func proceedLine(line string, counter *uint64) {
+	*counter++
 }

@@ -11,7 +11,7 @@ build:
 test:
 	go test ./...
 
-coverage:
+cov:
 	go test -coverprofile=.coverage ./...
 
 clean:

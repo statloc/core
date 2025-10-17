@@ -3,30 +3,41 @@ package tree
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"os"
-	"path/filepath"
 )
 
-func List(path string) (ListResponse, error) {
+func List(path string) (Nodes, error) {
 	response, err := os.ReadDir(path)
 
 	var pathError *os.PathError
 	if errors.As(err, &pathError) {
-		return ListResponse{}, &PathError{Path: path}
+		return nil, &PathError{Message: fmt.Sprintf("\"%s\" is not a directory", path)}
 	}
 
-	entries := []Node{}
+	entries := Nodes{}
 	for _, entry := range response {
 		entries = append(
 			entries,
 			Node{
-				Name:  filepath.Join(path, entry.Name()),
+				Name:  entry.Name(),
 				IsDir: entry.IsDir(),
 			},
 		)
 	}
 
-	return ListResponse{Nodes: entries}, nil
+	return entries, nil
+}
+
+func Chdir(path string) error {
+    err := os.Chdir(path)
+
+    var pathError *os.PathError
+	if errors.As(err, &pathError) {
+	    return &PathError{Message: fmt.Sprintf("\"%s\" is not a directory", path)}
+	}
+
+	return nil
 }
 
 func ReadNodeLineByLine(path string, hook LineHook, counter *uint64) {
