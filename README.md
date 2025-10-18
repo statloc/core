@@ -30,14 +30,13 @@ import (
 
 func main() {
     stats := core.GetStatistics("/path/to/project")
-    total := stats.Items["Total"]
 
     result := = fmt.Sprintf(
         `Statistics(total):
 lines of code: %d
 files: %d`,
-        total.LOC,
-        total.Files,
+        stats.Total.LOC,
+        stats.Total.Files,
     )
 
     fmt.Println(results)
