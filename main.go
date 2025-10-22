@@ -37,13 +37,13 @@ func GetStatistics(path string) (statistics Statistics, err error) {
 
 	err = nil
 
-	componentsSet := &componentSet{
+	componentsSet := componentSet{
 	    Elements: make(map[string]struct{}),
 		Tail:     nil,
 	}
 
 	tree.Chdir(path) //nolint:errcheck
-	goAroundCalculating(list, &statistics, nil, componentsSet)
+	goAroundCalculating(list, &statistics, componentsSet)
 	tree.Chdir("..") //nolint:errcheck
 
 	cleanStatistics(statistics.Languages)
@@ -55,8 +55,7 @@ func GetStatistics(path string) (statistics Statistics, err error) {
 func goAroundCalculating(
 	list          tree.Nodes,
 	statistics    *Statistics,
-	tailComponent *component,
-	componentsSet *componentSet,
+	componentsSet componentSet,
 ) {
 	for _, node := range list {
 		if node.IsDir {
@@ -64,13 +63,13 @@ func goAroundCalculating(
 
             exists = exists && !componentsSet.In(newComponentTitle)
             if exists {
-                tailComponent = componentsSet.Add(newComponentTitle)
+                componentsSet.Tail = componentsSet.Add(newComponentTitle)
             }
 
-            list, _ = tree.List(node.Name)
+            newList, _ := tree.List(node.Name)
 
             tree.Chdir(node.Name) //nolint:errcheck
-			goAroundCalculating(list, statistics, tailComponent, componentsSet)
+			goAroundCalculating(newList, statistics, componentsSet)
 			tree.Chdir("..") //nolint:errcheck
 
 			if exists {
