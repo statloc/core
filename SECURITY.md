@@ -6,9 +6,11 @@ Here's a list of versions of the project are
 currently being supported with security updates.
 
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.2     | :white_check_mark: |
+| Version | Supported |
+| ------- | --------- |
+| 0.1     | ❌        |
+| 0.2     | ✅        |
+| 0.3     | ✅        |
 
 #### ‼️ Reporting a Vulnerability
 
