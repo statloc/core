@@ -3,11 +3,13 @@ package statloc
 import (
 	_ "embed"
 	"errors"
+	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/statloc/core/internal/mapping"
 	"github.com/statloc/core/internal/matching"
-	"github.com/statloc/core/internal/tree"
+	t "github.com/statloc/core/internal/tree"
 )
 
 var (
@@ -21,9 +23,12 @@ var (
 func GetStatistics(path string) (statistics Statistics, err error) {
     mapping.Load(rawComponentsMapping, rawLanguagesMapping)
 
+    workdir, _ := os.Getwd()
+    tree := t.Tree{WorkDir: workdir}
+
     list, err := tree.List(path)
 
-	var treePathError *tree.PathError
+	var treePathError *t.PathError
 	if errors.As(err, &treePathError) {
 	    err = &PathError{Path: path}
 		return
@@ -37,14 +42,20 @@ func GetStatistics(path string) (statistics Statistics, err error) {
 
 	err = nil
 
-	componentsSet := &componentSet{
+	componentsSet := componentSet{
 	    Elements: make(map[string]struct{}),
 		Tail:     nil,
 	}
 
+	var waitGroup sync.WaitGroup
+	var mutex sync.Mutex
+
+
+	waitGroup.Add(1)
 	tree.Chdir(path) //nolint:errcheck
-	goAroundCalculating(list, &statistics, nil, componentsSet)
+	goAroundCalculating(&waitGroup, &mutex, tree, list, &statistics, componentsSet)
 	tree.Chdir("..") //nolint:errcheck
+	waitGroup.Wait()
 
 	cleanStatistics(statistics.Languages)
 	cleanStatistics(statistics.Components)
@@ -53,24 +64,28 @@ func GetStatistics(path string) (statistics Statistics, err error) {
 }
 
 func goAroundCalculating(
-	list          tree.Nodes,
+    waitGroup     *sync.WaitGroup,
+	mutex         *sync.Mutex,
+    tree          t.Tree,
+	list          t.Nodes,
 	statistics    *Statistics,
-	tailComponent *component,
-	componentsSet *componentSet,
+	componentsSet componentSet,
 ) {
+    defer waitGroup.Done()
 	for _, node := range list {
 		if node.IsDir {
             newComponentTitle, exists := matching.FindMatch(filepath.Base(node.Name), mapping.Components)
 
             exists = exists && !componentsSet.In(newComponentTitle)
             if exists {
-                tailComponent = componentsSet.Add(newComponentTitle)
+                componentsSet.Tail = componentsSet.Add(newComponentTitle)
             }
 
-            list, _ = tree.List(node.Name)
+            newList, _ := tree.List(node.Name)
 
+            waitGroup.Add(1)
             tree.Chdir(node.Name) //nolint:errcheck
-			goAroundCalculating(list, statistics, tailComponent, componentsSet)
+			go goAroundCalculating(waitGroup, mutex, tree.Copy(), newList, statistics, componentsSet.Copy())
 			tree.Chdir("..") //nolint:errcheck
 
 			if exists {
@@ -83,6 +98,7 @@ func goAroundCalculating(
                 LOC := uint64(1)
                 tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
 
+                mutex.Lock()
                 statistics.Total.Append(LOC, 1)
                 statistics.Languages[language].Append(LOC, 1)
 
@@ -95,6 +111,7 @@ func goAroundCalculating(
                 for componentTitle := range componentsSet.Elements {
                     statistics.Components[componentTitle].Append(LOC, 1)
                 }
+                mutex.Unlock()
             }
 		}
 	}

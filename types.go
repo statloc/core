@@ -41,6 +41,26 @@ func (s *componentSet) In(title string) bool {
     return exists
 }
 
+func (s *componentSet) Copy() componentSet {
+    elements := make(map[string]struct{})
+    tail := s.Tail.Copy(elements)
+    return componentSet{
+        Tail:     tail,
+        Elements: elements,
+    }
+}
+
+func (c *component) Copy(elements map[string]struct{}) *component {
+    if c == nil {
+        return nil
+    }
+    elements[c.Title] = struct{}{}
+    return &component{
+        Title: c.Title,
+        Prev:  c.Prev.Copy(elements),
+    }
+}
+
 func (t *TableItem) Append(LOC uint64, files uint64) {
 	t.LOC += LOC
 	t.Files += files

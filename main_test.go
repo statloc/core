@@ -29,7 +29,6 @@ func (s *MainSuite) TestGetStatistics() {
     assert.NotPanics(s.T(), func() {core.GetStatistics("testdata")}) //nolint:errcheck
 
     for title, item := range s.results.Components {
-        println(title)
         assert.Equal(s.T(), item.LOC, response.Components[title].LOC)
         assert.Equal(s.T(), item.Files, response.Components[title].Files)
     }
