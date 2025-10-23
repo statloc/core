@@ -9,10 +9,7 @@ build:
 	go mod download
 
 test:
-	go test ./...
-
-cov:
-	go test -coverprofile=.coverage ./...
+	go test -coverprofile=.coverage ./... | column -t
 
 clean:
 	rm -f .coverage
