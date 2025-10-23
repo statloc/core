@@ -1,4 +1,18 @@
 {
     "^([Tt]ests|.*_test|test_.*)$": "Tests",
-    "^(.*[Cc]ontrollers?)$": "Controllers"
+    "^([Cc]ontrollers?|.*_controller|.*Controller)$": "Controllers",
+    "^([Vv]iews?|.*_view|.*View)$": "Views",
+    "^([Mm]odels?|.*_model|.*Model)$": "Models",
+    "^[Ii]nfra(structure)?$": "Infrastructure",
+    "^[Pp]resentation$": "Presentation",
+    "^[Aa]pp(lication)?$": "Application",
+    "^[Dd]omain$": "Domain",
+    "^[Dd]oc(s|umentation)?$": "Documentation",
+    "^internal$": "Internal",
+    "^testdata$": "Testdata",
+    "^assets?$": "Assets",
+    "^[Rr]oute(r|s)?$": "Routes",
+    "^[Cc]ore$": "Core",
+    "^.*[Ss]ervices?$": "Services",
+    "^[Rr]epositor(y|ies)$": "Repositories"
 }
