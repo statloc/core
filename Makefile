@@ -9,7 +9,7 @@ build:
 	go mod download
 
 test:
-	go test -coverprofile=.coverage ./... | column -t
+	go test ./... -coverprofile=.coverage -timeout=10s -race
 
 clean:
 	rm -f .coverage
