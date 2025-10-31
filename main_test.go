@@ -1,6 +1,7 @@
 package statloc_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -23,18 +24,24 @@ func (s *MainSuite) SetupSuite() {
 }
 
 func (s *MainSuite) TestGetStatistics() {
+    _, err := core.GetStatistics("non_existing_dir")
+
+    assert.NotNil(s.T(), err)
+    var pathError *core.PathError
+    assert.ErrorAs(s.T(), err, &pathError)
+
     response, err := core.GetStatistics("testdata")
 
     assert.Nil(s.T(), err)
     assert.NotPanics(s.T(), func() {core.GetStatistics("testdata")}) //nolint:errcheck
 
     for title, item := range s.results.Components {
-        assert.Equal(s.T(), item.LOC, response.Components[title].LOC)
-        assert.Equal(s.T(), item.Files, response.Components[title].Files)
+        assert.Equal(s.T(), item.LOC, response.Components[title].LOC, fmt.Sprintf("Item title: %s", title))
+        assert.Equal(s.T(), item.Files, response.Components[title].Files, fmt.Sprintf("Item title: %s", title))
     }
     for title, item := range s.results.Languages{
-        assert.Equal(s.T(), item.LOC, response.Languages[title].LOC)
-        assert.Equal(s.T(), item.Files, response.Languages[title].Files)
+        assert.Equal(s.T(), item.LOC, response.Languages[title].LOC, fmt.Sprintf("Item title: %s", title))
+        assert.Equal(s.T(), item.Files, response.Languages[title].Files, fmt.Sprintf("Item title: %s", title))
     }
     assert.Equal(s.T(), s.results.Total.LOC, response.Total.LOC)
     assert.Equal(s.T(), s.results.Total.Files, response.Total.Files)
