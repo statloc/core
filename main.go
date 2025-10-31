@@ -48,12 +48,11 @@ func GetStatistics(path string) (statistics Statistics, err error) {
 	}
 
 	var waitGroup sync.WaitGroup
-	var mutex sync.Mutex
 
 
 	waitGroup.Add(1)
 	tree.Chdir(path) //nolint:errcheck
-	goAroundCalculating(&waitGroup, &mutex, tree, list, &statistics, componentsSet)
+	goAroundCalculating(&waitGroup, tree, list, &statistics, componentsSet)
 	tree.Chdir("..") //nolint:errcheck
 	waitGroup.Wait()
 
@@ -65,7 +64,6 @@ func GetStatistics(path string) (statistics Statistics, err error) {
 
 func goAroundCalculating(
     waitGroup     *sync.WaitGroup,
-	mutex         *sync.Mutex,
     tree          t.Tree,
 	list          t.Nodes,
 	statistics    *Statistics,
@@ -85,7 +83,7 @@ func goAroundCalculating(
 
             waitGroup.Add(1)
             tree.Chdir(node.Name) //nolint:errcheck
-			go goAroundCalculating(waitGroup, mutex, tree.Copy(), newList, statistics, componentsSet.Copy())
+			go goAroundCalculating(waitGroup, tree.Copy(), newList, statistics, componentsSet.Copy())
 			tree.Chdir("..") //nolint:errcheck
 
 			if exists {
@@ -98,7 +96,6 @@ func goAroundCalculating(
                 LOC := uint64(1)
                 tree.ReadNodeLineByLine(node.Name, proceedLine, &LOC)
 
-                mutex.Lock()
                 statistics.Total.Append(LOC, 1)
                 statistics.Languages[language].Append(LOC, 1)
 
@@ -111,7 +108,6 @@ func goAroundCalculating(
                 for componentTitle := range componentsSet.Elements {
                     statistics.Components[componentTitle].Append(LOC, 1)
                 }
-                mutex.Unlock()
             }
 		}
 	}
@@ -120,7 +116,7 @@ func goAroundCalculating(
 func initItems(mapping map[string]string) (items Items) {
    	items = make(Items)
     for _, value := range mapping {
-        items[value] = &TableItem{Files: 0, LOC: 0}
+        items[value] = &TableItem{Files: 0, LOC: 0, mutex: sync.Mutex{}}
 	}
 	return
 }

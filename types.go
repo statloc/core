@@ -1,5 +1,7 @@
 package statloc
 
+import "sync"
+
 type (
     component struct {
         Title string
@@ -14,6 +16,7 @@ type (
     TableItem struct {
         LOC   uint64
         Files uint64
+        mutex sync.Mutex
     }
 
     Items map[string]*TableItem
@@ -62,6 +65,8 @@ func (c *component) Copy(elements map[string]struct{}) *component {
 }
 
 func (t *TableItem) Append(LOC uint64, files uint64) {
+    t.mutex.Lock()
 	t.LOC += LOC
 	t.Files += files
+	t.mutex.Unlock()
 }
